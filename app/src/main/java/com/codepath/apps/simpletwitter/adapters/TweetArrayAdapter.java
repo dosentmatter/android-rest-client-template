@@ -17,8 +17,11 @@ import java.util.List;
 
 public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
 
+    private static final String SCREEN_NAME_PREFIX = "@";
+
     private static class ViewHolder {
         ImageView ivProfileImage;
+        TextView tvName;
         TextView tvScreenName;
         TextView tvText;
     }
@@ -41,6 +44,8 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
 
             viewHolder.ivProfileImage
                     = (ImageView)convertView.findViewById(R.id.ivProfileImage);
+            viewHolder.tvName
+                    = (TextView)convertView.findViewById(R.id.tvName);
             viewHolder.tvScreenName
                     = (TextView)convertView.findViewById(R.id.tvScreenName);
             viewHolder.tvText
@@ -57,7 +62,10 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
                .placeholder(R.drawable.ic_launcher)
                .into(viewHolder.ivProfileImage);
 
-        viewHolder.tvScreenName.setText(tweet.getUser().getScreenName());
+        viewHolder.tvName.setText(tweet.getUser().getName());
+        viewHolder
+        .tvScreenName
+        .setText(SCREEN_NAME_PREFIX + tweet.getUser().getScreenName());
         viewHolder.tvText.setText(tweet.getText());
 
         return convertView;

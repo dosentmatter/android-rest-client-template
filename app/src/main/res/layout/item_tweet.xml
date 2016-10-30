@@ -17,19 +17,29 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginRight="@dimen/tweet_profile_right_margin"
-        android:layout_marginEnd="@dimen/tweet_profile_right_margin"/>
+        android:layout_marginRight="@dimen/tweet_right_margin"
+        android:layout_marginEnd="@dimen/tweet_right_margin"/>
+
+    <TextView
+        tools:text="@string/tweet_name"
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvName"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/ivProfileImage"
+        android:layout_toEndOf="@+id/ivProfileImage"
+        android:layout_marginRight="@dimen/tweet_right_margin"
+        android:layout_marginEnd="@dimen/tweet_right_margin"/>
 
     <TextView
         tools:text="@string/tweet_screen_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/ivProfileImage"
-        android:layout_toEndOf="@+id/ivProfileImage"
         android:id="@+id/tvScreenName"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/tvName"
+        android:layout_toEndOf="@+id/tvName"/>
 
     <TextView
         tools:text="@string/tweet_text"
