@@ -23,6 +23,7 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
         ImageView ivProfileImage;
         TextView tvName;
         TextView tvScreenName;
+        TextView tvRelativeTimestamp;
         TextView tvText;
     }
 
@@ -48,6 +49,8 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
                     = (TextView)convertView.findViewById(R.id.tvName);
             viewHolder.tvScreenName
                     = (TextView)convertView.findViewById(R.id.tvScreenName);
+            viewHolder.tvRelativeTimestamp
+                    = (TextView)convertView.findViewById(R.id.tvRelativeTimestamp);
             viewHolder.tvText
                     = (TextView)convertView.findViewById(R.id.tvText);
 
@@ -66,6 +69,7 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
         viewHolder
         .tvScreenName
         .setText(SCREEN_NAME_PREFIX + tweet.getUser().getScreenName());
+        viewHolder.tvRelativeTimestamp.setText(tweet.getRelativeTimeStamp());
         viewHolder.tvText.setText(tweet.getText());
 
         return convertView;

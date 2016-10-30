@@ -42,13 +42,22 @@
         android:layout_toEndOf="@+id/tvName"/>
 
     <TextView
+        tools:text="@string/tweet_relative_timestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvRelativeTimestamp"
+        android:layout_below="@+id/tvName"
+        android:layout_toRightOf="@+id/ivProfileImage"
+        android:layout_toEndOf="@+id/ivProfileImage"/>
+
+    <TextView
         tools:text="@string/tweet_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tvText"
-        android:layout_below="@+id/tvScreenName"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/tvRelativeTimestamp"
         android:layout_toRightOf="@+id/ivProfileImage"
-        android:layout_toEndOf="@+id/ivProfileImage"/>
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"/>
+
 </RelativeLayout>
