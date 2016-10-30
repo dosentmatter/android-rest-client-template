@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Rest Client Template</string>
-    <string name="login_label">Log in</string>
+    <string name="app_name">Simple Twitter</string>
+    <string name="login_label">Connect to Twitter</string>
+    <string name="tweet_profile_image">Tweet Profile Image</string>
+    <string name="tweet_screen_name">\@dosentmatter9</string>
+    <string name="tweet_text">
+        Why can\'t the worlds greatest minds solve the mystery of consciousness?
+        | Oliver Burkeman http://t.co/tdDWtWn8UD via @instapaper
+    </string>
 
 </resources>
