@@ -1,7 +1,10 @@
 package com.codepath.apps.simpletwitter;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.codepath.apps.simpletwitter.adapters.TweetArrayAdapter;
@@ -20,6 +23,7 @@ public class TimelineActivity extends AppCompatActivity {
 
     private static final String TAG = TimelineActivity.class.getSimpleName();
     private static final int TWEET_COUNT = 25;
+    private static final int REQUEST_COMPOSE_TWEET = 0;
 
     private TwitterClient client;
 
@@ -39,6 +43,33 @@ public class TimelineActivity extends AppCompatActivity {
         RequestParams params = new RequestParams();
         params.put("count", TWEET_COUNT);
         populateTimeline(params);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_timeline, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.action_compose_tweet) {
+            onComposeTweet();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void onComposeTweet() {
+        Intent composeTweetIntent = new Intent(getApplicationContext(),
+                                               ComposeTweetActivity.class);
+        startActivityForResult(composeTweetIntent, REQUEST_COMPOSE_TWEET);
     }
 
     private void setupViews() {
@@ -89,5 +120,17 @@ public class TimelineActivity extends AppCompatActivity {
               };
 
         client.getHomeTimeLine(params, timelineHandler);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        if (resultCode == RESULT_OK && requestCode == REQUEST_COMPOSE_TWEET) {
+            tweets.clear();
+            tweetsAdapter.notifyDataSetChanged();
+            RequestParams params = new RequestParams();
+            params.put("count", TWEET_COUNT);
+            populateTimeline(params);
+        }
     }
 }

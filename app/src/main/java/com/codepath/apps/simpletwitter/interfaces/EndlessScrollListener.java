@@ -10,7 +10,7 @@ implements AbsListView.OnScrollListener {
     private int currentPage = -1;
     private int previousTotalItemCount = 0;
     private boolean loading = true;
-    private int startingPageIndex = 0;
+    private int startingPageIndex = -1;
 
     public EndlessScrollListener() {
     }
@@ -29,10 +29,10 @@ implements AbsListView.OnScrollListener {
     public void onScroll(AbsListView view, int firstVisibleItem,
                          int visibleItemCount, int totalItemCount) {
         if (totalItemCount < previousTotalItemCount) {
-            currentPage = startingPageIndex;
             previousTotalItemCount = totalItemCount;
             if (totalItemCount == 0) {
                 loading = true;
+                currentPage = startingPageIndex;
             }
         }
 
