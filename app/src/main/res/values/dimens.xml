@@ -6,5 +6,6 @@
     <dimen name="tweet_right_margin">5dp</dimen>
     <dimen name="tweet_profile_size">45dp</dimen>
     <dimen name="compose_tweet_button_width">96dp</dimen>
+    <dimen name="compose_tweet_text_height">394dp</dimen>
 
 </resources>

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -37,11 +38,17 @@ public class ComposeTweetActivity extends AppCompatActivity {
     }
 
     public void onTweet(View view) {
-        RequestParams params = new RequestParams();
-        params.put("status", etText.getText());
-        composeTweet(params);
-        setResult(RESULT_OK);
-        finish();
+        if (etText.getText().length() <=
+            getResources().getInteger(R.integer.tweet_max_length)) {
+            RequestParams params = new RequestParams();
+            params.put("status", etText.getText());
+            composeTweet(params);
+            setResult(RESULT_OK);
+            finish();
+        } else {
+            Toast.makeText(this, "Tweet is too long",
+                           Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void composeTweet(RequestParams params) {
