@@ -3,6 +3,7 @@ package com.codepath.apps.simpletwitter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -14,6 +15,8 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -122,15 +125,39 @@ public class TimelineActivity extends AppCompatActivity {
         client.getHomeTimeLine(params, timelineHandler);
     }
 
+    private void composeTweet(RequestParams params) {
+        JsonHttpResponseHandler composeTweetHandler
+            = new JsonHttpResponseHandler() {
+                  @Override
+                  public void onSuccess(int statusCode, Header[] headers,
+                                        JSONObject response) {
+                      try {
+                          tweetsAdapter.insert(new Tweet(response), 0);
+                      } catch (JSONException e) {
+                          Log.e(TAG, e.getMessage());
+                      }
+                  }
+
+                  @Override
+                  public void onFailure(int statusCode, Header[] headers,
+                                        String responseString,
+                                        Throwable throwable) {
+                      super.onFailure(statusCode, headers, responseString,
+                                      throwable);
+                  }
+              };
+
+        client.postUpdate(params, composeTweetHandler);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
         if (resultCode == RESULT_OK && requestCode == REQUEST_COMPOSE_TWEET) {
-            tweets.clear();
-            tweetsAdapter.notifyDataSetChanged();
+            String tweetText = data.getStringExtra("tweetText");
             RequestParams params = new RequestParams();
-            params.put("count", TWEET_COUNT);
-            populateTimeline(params);
+            params.put("status", tweetText);
+            composeTweet(params);
         }
     }
 }
