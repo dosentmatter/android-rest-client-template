@@ -8,9 +8,14 @@ import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.sql.language.Select;
+import com.raizlabs.android.dbflow.config.DatabaseDefinition;
+import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 import com.raizlabs.android.dbflow.sql.language.Where;
 import com.raizlabs.android.dbflow.structure.BaseModel;
+import com.raizlabs.android.dbflow.structure.database.transaction.ProcessModelTransaction;
+import com.raizlabs.android.dbflow.structure.database.transaction.QueryTransaction;
+import com.raizlabs.android.dbflow.structure.database.transaction.Transaction;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,11 +61,28 @@ public class Tweet extends BaseModel {
         this.createdAt = jsonObject.getString("created_at");
     }
 
+    public static void saveTweet(Tweet tweet) {
+        List<Tweet> tweets = new ArrayList<>();
+        tweets.add(tweet);
+        saveTweets(tweets);
+    }
+
     public static void saveTweets(List<Tweet> tweets) {
-        for (int i = 0; i < tweets.size(); i++) {
-            Tweet tweet = tweets.get(i);
-            tweet.save();
-        }
+        ProcessModelTransaction.ProcessModel processModel
+            = new ProcessModelTransaction.ProcessModel<Tweet>() {
+                  @Override
+                  public void processModel(Tweet tweet) {
+                      tweet.save();
+                  }
+              };
+        ProcessModelTransaction<Tweet> processModelTransaction
+            = new ProcessModelTransaction.Builder<>(processModel).addAll(tweets)
+                                         .build();
+        DatabaseDefinition database = FlowManager.getDatabase(MyDatabase.class);
+        Transaction transaction
+            = database.beginTransactionAsync(processModelTransaction)
+                      .build();
+        transaction.execute();
     }
 
     public static List<Tweet> fromJSONArray(JSONArray array) {
@@ -76,19 +98,22 @@ public class Tweet extends BaseModel {
         return results;
     }
 
-    public static List<Tweet> getHomeTimeLine(Map<String, String> params) {
+    public static void
+    getHomeTimeLine(Map<String, String> params,
+                    QueryTransaction.QueryResultListCallback<Tweet> handler) {
         String countString = params.get("count");
         String maxIdString = params.get("max_id");
 
         int count = countString != null ?
         Integer.valueOf(countString) : DEFAULT_TWEET_COUNT;
 
-        Where where = new Select().from(Tweet.class).where();
+        Where where = SQLite.select().from(Tweet.class).where();
         if (maxIdString != null) {
             long maxId = Long.valueOf(maxIdString);
             where = where.andAll(Tweet_Table.id.lessThanOrEq(maxId));
         }
-        return where.orderBy(Tweet_Table.id, false).limit(count).queryList();
+        where = where.orderBy(Tweet_Table.id, false).limit(count);
+        where.async().queryListResultCallback(handler).execute();
     }
 
     public String getText() {

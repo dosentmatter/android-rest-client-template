@@ -2,6 +2,7 @@ package com.codepath.apps.simpletwitter;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,8 +15,10 @@ import com.codepath.apps.simpletwitter.interfaces.EndlessScrollListener;
 import com.codepath.apps.simpletwitter.models.Tweet;
 import com.codepath.apps.simpletwitter.network.NetworkTools;
 import com.codepath.apps.simpletwitter.network.TwitterClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.raizlabs.android.dbflow.structure.database.transaction.QueryTransaction;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -137,7 +140,7 @@ public class TimelineActivity extends AppCompatActivity {
 
     private void populateTimeline(Map<String, String> params) {
         if (NetworkTools.isOnline()) {
-            JsonHttpResponseHandler timelineHandler
+            AsyncHttpResponseHandler timelineHandler
                 = new JsonHttpResponseHandler() {
                       @Override
                       public void onSuccess(int statusCode, Header[] headers,
@@ -161,8 +164,16 @@ public class TimelineActivity extends AppCompatActivity {
                 = NetworkTools.convertToRequestParams(params);
             client.getHomeTimeLine(requestParams, timelineHandler);
         } else {
-            List<Tweet> tweetResults = Tweet.getHomeTimeLine(params);
-            tweetsAdapter.addAll(tweetResults);
+            QueryTransaction.QueryResultListCallback<Tweet> timelineHandler
+                = new QueryTransaction.QueryResultListCallback<Tweet>() {
+                      @Override
+                      public void
+                      onListQueryResult(QueryTransaction transaction,
+                                        @Nullable List<Tweet> tResult) {
+                          tweetsAdapter.addAll(tResult);
+                      }
+                  };
+            Tweet.getHomeTimeLine(params, timelineHandler);
         }
 
     }
@@ -175,7 +186,7 @@ public class TimelineActivity extends AppCompatActivity {
                                         JSONObject response) {
                       try {
                           Tweet tweet = new Tweet(response);
-                          tweet.save();
+                          Tweet.saveTweet(tweet);
                           tweetsAdapter.insert(tweet, 0);
                       } catch (JSONException e) {
                           Log.e(TAG, e.getMessage());
