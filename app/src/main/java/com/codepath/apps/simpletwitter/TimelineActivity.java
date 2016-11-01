@@ -2,6 +2,7 @@ package com.codepath.apps.simpletwitter;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -29,6 +30,8 @@ public class TimelineActivity extends AppCompatActivity {
     private static final int REQUEST_COMPOSE_TWEET = 0;
 
     private TwitterClient client;
+
+    private SwipeRefreshLayout swipeContainer;
 
     private ListView lvTweets;
     private ArrayList<Tweet> tweets;
@@ -76,6 +79,10 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void setupViews() {
+        swipeContainer = (SwipeRefreshLayout)findViewById(R.id.swipeContainer);
+
+        setupSwipeContainerListeners();
+
         lvTweets = (ListView)findViewById(R.id.lvTweets);
 
         tweets = new ArrayList<>();
@@ -83,6 +90,27 @@ public class TimelineActivity extends AppCompatActivity {
         lvTweets.setAdapter(tweetsAdapter);
 
         setupListViewListeners();
+    }
+
+    private void setupSwipeContainerListeners() {
+        SwipeRefreshLayout.OnRefreshListener swipeContainerRefreshListener
+            = new SwipeRefreshLayout.OnRefreshListener() {
+                  @Override
+                  public void onRefresh() {
+                      tweets.clear();
+                      tweetsAdapter.notifyDataSetChanged();
+                      RequestParams params = new RequestParams();
+                      params.put("count", TWEET_COUNT);
+                      populateTimeline(params);
+                      swipeContainer.setRefreshing(false);
+                  }
+              };
+
+        swipeContainer.setOnRefreshListener(swipeContainerRefreshListener);
+
+        swipeContainer
+        .setColorSchemeResources(android.R.color.holo_blue_bright);
+
     }
 
     private void setupListViewListeners() {
