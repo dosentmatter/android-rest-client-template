@@ -3,6 +3,7 @@ package com.codepath.apps.simpletwitter;
 import android.app.Application;
 import android.content.Context;
 
+import com.codepath.apps.simpletwitter.network.TwitterClient;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowLog;
 import com.raizlabs.android.dbflow.config.FlowManager;

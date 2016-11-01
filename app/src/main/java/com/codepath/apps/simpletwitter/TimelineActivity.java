@@ -12,6 +12,8 @@ import android.widget.ListView;
 import com.codepath.apps.simpletwitter.adapters.TweetArrayAdapter;
 import com.codepath.apps.simpletwitter.interfaces.EndlessScrollListener;
 import com.codepath.apps.simpletwitter.models.Tweet;
+import com.codepath.apps.simpletwitter.network.NetworkTools;
+import com.codepath.apps.simpletwitter.network.TwitterClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -20,6 +22,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -46,8 +51,8 @@ public class TimelineActivity extends AppCompatActivity {
 
         setupViews();
 
-        RequestParams params = new RequestParams();
-        params.put("count", TWEET_COUNT);
+        Map<String, String> params = new HashMap<>();
+        params.put("count", String.valueOf(TWEET_COUNT));
         populateTimeline(params);
     }
 
@@ -99,8 +104,8 @@ public class TimelineActivity extends AppCompatActivity {
                   public void onRefresh() {
                       tweets.clear();
                       tweetsAdapter.notifyDataSetChanged();
-                      RequestParams params = new RequestParams();
-                      params.put("count", TWEET_COUNT);
+                      Map<String, String> params = new HashMap<>();
+                      params.put("count", String.valueOf(TWEET_COUNT));
                       populateTimeline(params);
                       swipeContainer.setRefreshing(false);
                   }
@@ -118,11 +123,11 @@ public class TimelineActivity extends AppCompatActivity {
             = new EndlessScrollListener() {
                   @Override
                   public boolean onLoadMore(int page, int totalItemsCount) {
-                      RequestParams params = new RequestParams();
-                      params.put("count", TWEET_COUNT);
+                      Map<String, String> params = new HashMap<>();
+                      params.put("count", String.valueOf(TWEET_COUNT));
                       long oldestTweetId
                           = tweets.get(tweets.size() - 1).getId();
-                      params.put("max_id", oldestTweetId - 1);
+                      params.put("max_id", String.valueOf(oldestTweetId - 1));
                       populateTimeline(params);
                       return true;
                   }
@@ -130,27 +135,36 @@ public class TimelineActivity extends AppCompatActivity {
         lvTweets.setOnScrollListener(listViewOnScrollListener);
     }
 
-    private void populateTimeline(RequestParams params) {
-        JsonHttpResponseHandler timelineHandler
-            = new JsonHttpResponseHandler() {
-                  @Override
-                  public void onSuccess(int statusCode, Header[] headers,
-                                        JSONArray response) {
-                      ArrayList<Tweet> tweetResults
-                          = Tweet.fromJSONArray(response);
-                      tweetsAdapter.addAll(tweetResults);
-                  }
+    private void populateTimeline(Map<String, String> params) {
+        if (NetworkTools.isOnline()) {
+            JsonHttpResponseHandler timelineHandler
+                = new JsonHttpResponseHandler() {
+                      @Override
+                      public void onSuccess(int statusCode, Header[] headers,
+                                            JSONArray response) {
+                          List<Tweet> tweetResults
+                              = Tweet.fromJSONArray(response);
+                          Tweet.saveTweets(tweetResults);
+                          tweetsAdapter.addAll(tweetResults);
+                      }
 
-                  @Override
-                  public void onFailure(int statusCode, Header[] headers,
-                                        String responseString,
-                                        Throwable throwable) {
-                      super.onFailure(statusCode, headers, responseString,
-                                      throwable);
-                  }
-              };
+                      @Override
+                      public void onFailure(int statusCode, Header[] headers,
+                                            String responseString,
+                                            Throwable throwable) {
+                          super.onFailure(statusCode, headers, responseString,
+                                          throwable);
+                      }
+                  };
 
-        client.getHomeTimeLine(params, timelineHandler);
+            RequestParams requestParams
+                = NetworkTools.convertToRequestParams(params);
+            client.getHomeTimeLine(requestParams, timelineHandler);
+        } else {
+            List<Tweet> tweetResults = Tweet.getHomeTimeLine(params);
+            tweetsAdapter.addAll(tweetResults);
+        }
+
     }
 
     private void composeTweet(RequestParams params) {
@@ -160,7 +174,9 @@ public class TimelineActivity extends AppCompatActivity {
                   public void onSuccess(int statusCode, Header[] headers,
                                         JSONObject response) {
                       try {
-                          tweetsAdapter.insert(new Tweet(response), 0);
+                          Tweet tweet = new Tweet(response);
+                          tweet.save();
+                          tweetsAdapter.insert(tweet, 0);
                       } catch (JSONException e) {
                           Log.e(TAG, e.getMessage());
                       }
