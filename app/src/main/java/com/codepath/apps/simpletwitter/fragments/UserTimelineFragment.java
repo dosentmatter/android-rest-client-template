@@ -5,7 +5,6 @@ import android.os.Bundle;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class UserTimelineFragment extends TweetsListFragment {
@@ -19,11 +18,10 @@ public class UserTimelineFragment extends TweetsListFragment {
     }
 
     @Override
-    protected void populateTimeline() {
-        Map<String, String> params = new HashMap<>();
-        params.put("count", String.valueOf(TWEET_COUNT));
+    protected Map<String, String> getParams() {
+        Map <String, String> params = super.getParams();
         params.put("screen_name", getArguments().getString("screenName"));
-        populateTimeline(params);
+        return params;
     }
 
     @Override

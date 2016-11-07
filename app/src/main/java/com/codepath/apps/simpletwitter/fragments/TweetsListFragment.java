@@ -13,6 +13,7 @@ import android.widget.ListView;
 import com.codepath.apps.simpletwitter.R;
 import com.codepath.apps.simpletwitter.TwitterApplication;
 import com.codepath.apps.simpletwitter.adapters.TweetArrayAdapter;
+import com.codepath.apps.simpletwitter.interfaces.EndlessScrollListener;
 import com.codepath.apps.simpletwitter.models.Tweet;
 import com.codepath.apps.simpletwitter.network.NetworkTools;
 import com.codepath.apps.simpletwitter.network.TwitterClient;
@@ -80,13 +81,18 @@ public abstract class TweetsListFragment extends Fragment {
 
         lvTweets.setAdapter(tweetsAdapter);
 
-//        setupListViewListeners();
+        setupListViewListeners();
     }
 
     protected void populateTimeline() {
+        Map<String, String> params = getParams();
+        populateTimeline(params);
+    }
+
+    protected Map<String, String> getParams() {
         Map<String, String> params = new HashMap<>();
         params.put("count", String.valueOf(TWEET_COUNT));
-        populateTimeline(params);
+        return params;
     }
 
     protected void populateTimeline(Map<String, String> params) {
@@ -150,23 +156,22 @@ public abstract class TweetsListFragment extends Fragment {
 //        .setColorSchemeResources(android.R.color.holo_blue_bright);
 //
 //    }
-//
-//    private void setupListViewListeners() {
-//        EndlessScrollListener listViewOnScrollListener
-//            = new EndlessScrollListener() {
-//                  @Override
-//                  public boolean onLoadMore(int page, int totalItemsCount) {
-//                      Map<String, String> params = new HashMap<>();
-//                      params.put("count", String.valueOf(TWEET_COUNT));
-//                      long oldestTweetId
-//                          = tweetsList.get(tweetsList.size() - 1).getId();
-//                      params.put("max_id", String.valueOf(oldestTweetId - 1));
-//                      populateTimeline(params);
-//                      return true;
-//                  }
-//              };
-//        lvTweets.setOnScrollListener(listViewOnScrollListener);
-//    }
+
+    private void setupListViewListeners() {
+        EndlessScrollListener listViewOnScrollListener
+            = new EndlessScrollListener() {
+                  @Override
+                  public boolean onLoadMore(int page, int totalItemsCount) {
+                      Map<String, String> params = getParams();
+                      long oldestTweetId
+                          = tweetsList.get(tweetsList.size() - 1).getId();
+                      params.put("max_id", String.valueOf(oldestTweetId - 1));
+                      populateTimeline(params);
+                      return true;
+                  }
+              };
+        lvTweets.setOnScrollListener(listViewOnScrollListener);
+    }
 
     public void addAll(List<Tweet> tweets) {
         tweetsAdapter.addAll(tweets);
