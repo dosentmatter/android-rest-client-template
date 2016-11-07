@@ -75,7 +75,7 @@ public abstract class TweetsListFragment extends Fragment {
     private void setupViews(View view) {
         swipeContainer = (SwipeRefreshLayout)view.findViewById(R.id.swipeContainer);
 
-//        setupSwipeContainerListeners();
+        setupSwipeContainerListeners();
 
         lvTweets = (ListView)view.findViewById(R.id.lvTweets);
 
@@ -135,27 +135,26 @@ public abstract class TweetsListFragment extends Fragment {
 
     abstract protected void getTimeLine(RequestParams params,
                                         AsyncHttpResponseHandler handler);
-//
-//    private void setupSwipeContainerListeners() {
-//        SwipeRefreshLayout.OnRefreshListener swipeContainerRefreshListener
-//            = new SwipeRefreshLayout.OnRefreshListener() {
-//                  @Override
-//                  public void onRefresh() {
-//                      tweetsList.clear();
-//                      tweetsAdapter.notifyDataSetChanged();
-//                      Map<String, String> params = new HashMap<>();
-//                      params.put("count", String.valueOf(TWEET_COUNT));
-//                      populateTimeline(params);
-//                      swipeContainer.setRefreshing(false);
-//                  }
-//              };
-//
-//        swipeContainer.setOnRefreshListener(swipeContainerRefreshListener);
-//
-//        swipeContainer
-//        .setColorSchemeResources(android.R.color.holo_blue_bright);
-//
-//    }
+
+    private void setupSwipeContainerListeners() {
+        SwipeRefreshLayout.OnRefreshListener swipeContainerRefreshListener
+            = new SwipeRefreshLayout.OnRefreshListener() {
+                  @Override
+                  public void onRefresh() {
+                      tweetsList.clear();
+                      tweetsAdapter.notifyDataSetChanged();
+                      Map<String, String> params = getParams();
+                      populateTimeline(params);
+                      swipeContainer.setRefreshing(false);
+                  }
+              };
+
+        swipeContainer.setOnRefreshListener(swipeContainerRefreshListener);
+
+        swipeContainer
+        .setColorSchemeResources(android.R.color.holo_blue_bright);
+
+    }
 
     private void setupListViewListeners() {
         EndlessScrollListener listViewOnScrollListener
