@@ -12,6 +12,7 @@ import com.codepath.apps.simpletwitter.models.User;
 import com.codepath.apps.simpletwitter.network.TwitterClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
@@ -26,13 +27,14 @@ public class ProfileActivity extends AppCompatActivity {
     private static final String TAG = UserTimelineFragment.class
                                       .getSimpleName();
 
-    TwitterClient client;
-    User user;
+    private TwitterClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        String screenName = getIntent().getStringExtra("screenName");
 
         client = TwitterApplication.getRestClient();
         AsyncHttpResponseHandler userHandler
@@ -41,12 +43,13 @@ public class ProfileActivity extends AppCompatActivity {
                   public void onSuccess(int statusCode, Header[] headers,
                                         JSONObject response) {
                       try {
-                          user = new User(response);
+                          User user = new User(response);
+                          getSupportActionBar()
+                          .setTitle(user.getPrefixedScreenName());
+                          populateProfileHeader(user);
                       } catch (JSONException e) {
                           Log.e(TAG, e.getMessage());
                       }
-                      getSupportActionBar().setTitle(user.getPrefixedScreenName());
-                      populateProfileHeader(user);
                   }
 
                   @Override
@@ -56,9 +59,13 @@ public class ProfileActivity extends AppCompatActivity {
                       Log.d(TAG, responseString);
                   }
               };
-        client.getUserInfo(null, userHandler);
-
-        String screenName = getIntent().getStringExtra("screenName");
+        if (screenName != null) {
+            RequestParams requestParams = new RequestParams();
+            requestParams.put("screen_name", screenName);
+            client.getUserInfo(requestParams, userHandler);
+        } else {
+            client.getCurrentUserInfo(null, userHandler);
+        }
 
         if (savedInstanceState == null) {
             UserTimelineFragment userTimelineFragment

@@ -1,6 +1,7 @@
 package com.codepath.apps.simpletwitter.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.codepath.apps.simpletwitter.ProfileActivity;
 import com.codepath.apps.simpletwitter.R;
 import com.codepath.apps.simpletwitter.models.Tweet;
 import com.squareup.picasso.Picasso;
@@ -58,10 +60,30 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
         }
 
         viewHolder.ivProfileImage.setImageResource(android.R.color.transparent);
-        String profileImageUrl = tweet.getUser().getProfileImageUrl();
+        final String profileImageUrl = tweet.getUser().getProfileImageUrl();
         Picasso.with(getContext()).load(profileImageUrl)
                .placeholder(R.drawable.ic_launcher)
                .into(viewHolder.ivProfileImage);
+
+        View.OnClickListener profileImageOnClickListener
+            = new View.OnClickListener() {
+                  @Override
+                  public void onClick(View view) {
+                      if (!(getContext() instanceof ProfileActivity)) {
+                          Intent profileIntent
+                                  = new Intent(getContext(),
+                                               ProfileActivity.class);
+                          Tweet tweet = (Tweet)view.getTag();
+                          profileIntent
+                          .putExtra("screenName",
+                                    tweet.getUser().getScreenName());
+                          getContext().startActivity(profileIntent);
+                      }
+                  }
+              };
+        viewHolder.ivProfileImage.setTag(tweet);
+        viewHolder.ivProfileImage
+                  .setOnClickListener(profileImageOnClickListener);
 
         viewHolder.tvName.setText(tweet.getUser().getName());
         viewHolder
