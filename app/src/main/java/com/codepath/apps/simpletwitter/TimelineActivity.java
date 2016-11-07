@@ -1,5 +1,6 @@
 package com.codepath.apps.simpletwitter;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -47,6 +48,10 @@ public class TimelineActivity extends AppCompatActivity {
 //            onComposeTweet();
 //            return true;
 //        }
+        if (id == R.id.action_profile) {
+            onProfile();
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -79,6 +84,12 @@ public class TimelineActivity extends AppCompatActivity {
         public int getCount() {
             return tabTitles.length;
         }
+    }
+
+    private void onProfile() {
+        Intent profileIntent = new Intent(getApplicationContext(),
+                                          ProfileActivity.class);
+        startActivity(profileIntent);
     }
 
 //    private void onComposeTweet() {

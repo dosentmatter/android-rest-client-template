@@ -12,7 +12,7 @@
         android:layout_width="@dimen/tweet_profile_size"
         android:layout_height="@dimen/tweet_profile_size"
         tools:src="@drawable/ic_launcher"
-        android:contentDescription="@string/tweet_profile_image"
+        android:contentDescription="@string/profile_image"
         android:id="@+id/ivProfileImage"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
@@ -21,7 +21,7 @@
         android:layout_marginEnd="@dimen/tweet_right_margin"/>
 
     <TextView
-        tools:text="@string/tweet_name"
+        tools:text="@string/twitter_name"
         android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
         android:layout_marginEnd="@dimen/tweet_right_margin"/>
 
     <TextView
-        tools:text="@string/tweet_screen_name"
+        tools:text="@string/twitter_screen_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tvScreenName"

@@ -35,6 +35,8 @@
         </activity>
         <activity android:name=".ComposeTweetActivity">
         </activity>
+        <activity android:name=".ProfileActivity">
+        </activity>
     </application>
 
 </manifest>

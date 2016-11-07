@@ -17,8 +17,6 @@ import java.util.List;
 
 public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
 
-    private static final String SCREEN_NAME_PREFIX = "@";
-
     private static class ViewHolder {
         ImageView ivProfileImage;
         TextView tvName;
@@ -68,7 +66,7 @@ public class TweetArrayAdapter extends ArrayAdapter<Tweet> {
         viewHolder.tvName.setText(tweet.getUser().getName());
         viewHolder
         .tvScreenName
-        .setText(SCREEN_NAME_PREFIX + tweet.getUser().getScreenName());
+        .setText(tweet.getUser().getPrefixedScreenName());
         viewHolder.tvRelativeTimestamp.setText(tweet.getRelativeTimeStamp());
         viewHolder.tvText.setText(tweet.getText());
 

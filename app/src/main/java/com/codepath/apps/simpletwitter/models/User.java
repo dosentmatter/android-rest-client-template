@@ -25,6 +25,15 @@ public class User extends BaseModel {
     @Column
     private String profileImageUrl;
 
+    @Column
+    private String description;
+
+    @Column
+    private int followersCount;
+
+    @Column
+    private int friendsCount;
+
     public User() {
         super();
     }
@@ -36,6 +45,9 @@ public class User extends BaseModel {
         this.id = jsonObject.getLong("id");
         this.screenName = jsonObject.getString("screen_name");
         this.profileImageUrl = jsonObject.getString("profile_image_url");
+        this.description = jsonObject.getString("description");
+        this.followersCount = jsonObject.getInt("followers_count");
+        this.friendsCount = jsonObject.getInt("friends_count");
     }
 
     public String getName() {
@@ -58,6 +70,10 @@ public class User extends BaseModel {
         return screenName;
     }
 
+    public String getPrefixedScreenName() {
+        return "@" + screenName;
+    }
+
     public void setScreenName(String screenName) {
         this.screenName = screenName;
     }
@@ -68,5 +84,36 @@ public class User extends BaseModel {
 
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getFollowersCount() {
+        return followersCount;
+    }
+
+    public String getSuffixedFollowersCount() {
+        return followersCount + " Followers";
+    }
+
+    public void setFollowersCount(int followersCount) {
+        this.followersCount = followersCount;
+    }
+
+    public int getFriendsCount() {
+        return friendsCount;
+    }
+
+    public String getSuffixedFriendsCount() {
+        return friendsCount + " Following";
+    }
+    public void setFriendsCount(int friendsCount) {
+        this.friendsCount = friendsCount;
     }
 }
