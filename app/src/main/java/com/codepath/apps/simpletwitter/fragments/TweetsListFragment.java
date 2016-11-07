@@ -175,4 +175,8 @@ public abstract class TweetsListFragment extends Fragment {
     public void addAll(List<Tweet> tweets) {
         tweetsAdapter.addAll(tweets);
     }
+
+    public void insert(Tweet tweet, int index) {
+        tweetsAdapter.insert(tweet, index);
+    }
 }
