@@ -128,11 +128,12 @@ public class TimelineActivity extends AppCompatActivity {
                       try {
                           Tweet tweet = new Tweet(response);
                           Tweet.saveTweet(tweet);
+                          viewPager.setCurrentItem(0);
                           HomeTimelineFragment homeTimelineFragment
                               = (HomeTimelineFragment)viewPagerAdapter
                                 .getRegisteredFragment(0);
                           homeTimelineFragment.insert(tweet, 0);
-                          viewPager.setCurrentItem(0);
+                          homeTimelineFragment.smoothScrollToPosition(0);
                       } catch (JSONException e) {
                           Log.e(TAG, e.getMessage());
                       }

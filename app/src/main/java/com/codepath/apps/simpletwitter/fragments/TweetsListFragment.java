@@ -179,4 +179,8 @@ public abstract class TweetsListFragment extends Fragment {
     public void insert(Tweet tweet, int index) {
         tweetsAdapter.insert(tweet, index);
     }
+
+    public void smoothScrollToPosition(int position) {
+        lvTweets.smoothScrollToPosition(position);
+    }
 }
